@@ -41,12 +41,12 @@ const fullResponse =
     '\r\n' +
     body;
 
-const server = net.createServer(function(socket) {
+const server = net.createServer((socket) => {
   let postBody = '';
 
   socket.setEncoding('utf8');
 
-  socket.on('data', function(chunk) {
+  socket.on('data', (chunk) => {
     postBody += chunk;
 
     if (postBody.includes('\r\n')) {
@@ -56,23 +56,23 @@ const server = net.createServer(function(socket) {
     }
   });
 
-  socket.on('error', function(err) {
+  socket.on('error', (err) => {
     assert.strictEqual(err.code, 'ECONNRESET');
   });
 });
 
 
-server.listen(0, common.mustCall(function() {
-  http.get({ port: this.address().port }, common.mustCall(function(res) {
+server.listen(0, common.mustCall(() => {
+  http.get({ port: server.address().port }, common.mustCall((res) => {
     let buffer = '';
     console.log(`Got res code: ${res.statusCode}`);
 
     res.setEncoding('utf8');
-    res.on('data', function(chunk) {
+    res.on('data', (chunk) => {
       buffer += chunk;
     });
 
-    res.on('end', common.mustCall(function() {
+    res.on('end', common.mustCall(() => {
       console.log(`Response ended, read ${buffer.length} bytes`);
       assert.strictEqual(body, buffer);
       server.close();
